@@ -48,4 +48,4 @@ def test_check_connection_failure_missing_credentials(config):
 def test_streams(config_oauth: dict):
     streams = SourceExact().streams(config_oauth)
 
-    assert len(streams) == 39
+    assert len(streams) == 43

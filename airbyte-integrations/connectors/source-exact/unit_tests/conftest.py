@@ -11,6 +11,7 @@ replication_start_date = "2017-01-25T00:00:00Z"
 def config_oauth():
     return {
         "divisions": [123],
+        "base_url": "https://start.exactonline.nl",
         "credentials": {
             "client_id": "client_id",
             "client_secret": "client_secret",
