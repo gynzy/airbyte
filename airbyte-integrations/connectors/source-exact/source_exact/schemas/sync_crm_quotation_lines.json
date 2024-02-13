@@ -39,6 +39,34 @@
         "number"
       ]
     },
+    "CostCenter": {
+      "description": "Reference to Cost center",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "CostCenterDescription": {
+      "description": "Description of CostCenter",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "CostUnit": {
+      "description": "Reference to Cost unit",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "CostUnitDescription": {
+      "description": "Description of CostUnit",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
     "Created": {
       "description": "Date and time on which the quotation was created",
       "type": [
@@ -63,6 +91,13 @@
     },
     "CustomerItemCode": {
       "description": "Code the customer uses for this item",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "CustomField": {
+      "description": "Custom field endpoint",
       "type": [
         "null",
         "string"
@@ -151,6 +186,13 @@
       "type": [
         "null",
         "string"
+      ]
+    },
+    "Optional": {
+      "description": "Indicates the optional line",
+      "type": [
+        "null",
+        "boolean"
       ]
     },
     "Quantity": {

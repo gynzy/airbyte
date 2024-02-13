@@ -153,6 +153,13 @@
         "string"
       ]
     },
+    "SalesOrderLine": {
+      "description": "ID of sales order line associated with this serial or batch number.",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
     "SalesReturnLine": {
       "description": "ID of sales return associated with this serial or batch number.",
       "type": [

@@ -138,6 +138,13 @@
         "string"
       ]
     },
+    "CustomField": {
+      "description": "Custom field endpoint",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
     "Date": {
       "description": "Entry date",
       "type": [

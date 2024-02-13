@@ -485,6 +485,20 @@
         "null",
         "string"
       ]
+    },
+    "TitleAbbreviation": {
+      "description": "TitleAbbreviation",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "TitleDescription": {
+      "description": "TitleDescription",
+      "type": [
+        "null",
+        "string"
+      ]
     }
   }
 }

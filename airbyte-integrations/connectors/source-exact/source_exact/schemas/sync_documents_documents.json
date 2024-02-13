@@ -189,6 +189,41 @@
         "boolean"
       ]
     },
+    "Item": {
+      "description": "The item linked to the document",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ItemCode": {
+      "description": "Code of Item",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ItemDescription": {
+      "description": "Description of Item",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ItemMaterial": {
+      "description": "ID of bill of material materials",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ItemRoutingStep": {
+      "description": "ID of bill of material routings",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
     "Language": {
       "description": "The language code of the document",
       "type": [
@@ -283,6 +318,13 @@
     },
     "Subject": {
       "description": "Subject of this document",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "TeamsMeetingId": {
+      "description": "Teams meeting id",
       "type": [
         "null",
         "string"

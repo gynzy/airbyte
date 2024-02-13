@@ -1,0 +1,426 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "SyncManufacturingShopOrders",
+  "additionalProperties": true,
+  "properties": {
+    "Timestamp": {
+      "description": "Timestamp",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "CADDrawingURL": {
+      "description": "URL to CAD Drawing Specified on General tab shoporder",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "Costcenter": {
+      "description": "The cost center linked to the shop order",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "CostcenterDescription": {
+      "description": "Description of Costcenter",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "Costunit": {
+      "description": "The cost unit linked to the shop order",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "CostunitDescription": {
+      "description": "Description of Costunit",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "Created": {
+      "description": "Creation date",
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "Creator": {
+      "description": "User ID of creator",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "CreatorFullName": {
+      "description": "Name of creator",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "Description": {
+      "description": "Description of the shop order",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "Division": {
+      "description": "Division code",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "EntryDate": {
+      "description": "Date on which the shop order was entered, does not need to be the same as syscreated date but is usually the same.",
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "ID": {
+      "description": "Primary key",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "IsBatch": {
+      "description": "Indicates if the item created by this shoporder is a batch item or not",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "IsFractionAllowedItem": {
+      "description": "Indicates if fractions (for example 0.35) are allowed for quantities of the item created by this shoporder",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "IsInPlanning": {
+      "description": "Indicator that Shop order is in planning",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "IsOnHold": {
+      "description": "Indicator if the Shop order is on hold",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "IsReleased": {
+      "description": "Indicator that the Shop order has been released to production",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "IsSerial": {
+      "description": "Does the material plan's item use serial numbers",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "Item": {
+      "description": "Reference to the item created by this shoporder",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ItemCode": {
+      "description": "Code of the item created by this shop order",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ItemDescription": {
+      "description": "Description of the item created by this shop order",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ItemPictureUrl": {
+      "description": "URL of the picture linked to the item created by this shop order",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ItemVersion": {
+      "description": "Reference to ItemVersion",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ItemVersionDescription": {
+      "description": "Description of Item Version",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "Modified": {
+      "description": "Last modified date",
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "Modifier": {
+      "description": "User ID of modifier",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ModifierFullName": {
+      "description": "Name of modifier",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "Notes": {
+      "description": "Notes - only viewed internally",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "PlannedDate": {
+      "description": "Planned end date of this shop order",
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "PlannedQuantity": {
+      "description": "Planned quantity",
+      "type": [
+        "null",
+        "number"
+      ]
+    },
+    "PlannedStartDate": {
+      "description": "Planned start date of this shop order",
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "ProducedQuantity": {
+      "description": "Quantity finished",
+      "type": [
+        "null",
+        "number"
+      ]
+    },
+    "ProductionLeadDays": {
+      "description": "Production lead days",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "Project": {
+      "description": "Reference to Project",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ProjectDescription": {
+      "description": "Description of Project",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ReadyToShipQuantity": {
+      "description": "Quantity ready to ship",
+      "type": [
+        "null",
+        "number"
+      ]
+    },
+    "SalesOrderLineCount": {
+      "description": "Number of sales orders linked to this shop order",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "SelectionCode": {
+      "description": "ID of selection code. Only supported by the Plus, Professional and Premium editions for Wholesale & Distribution and Manufacturing",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "SelectionCodeCode": {
+      "description": "Code of Selection code",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "SelectionCodeDescription": {
+      "description": "Description of Selection code",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ShopOrderByProductPlanBackflushCount": {
+      "description": "Number of shop order by-product plans, which are backflushed, for this shop order",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "ShopOrderByProductPlanCount": {
+      "description": "Number of shop order by-product plans for this shop order",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "ShopOrderMain": {
+      "description": "Shop order main",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ShopOrderMainNumber": {
+      "description": "Shop order main number",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "ShopOrderMaterialPlanBackflushCount": {
+      "description": "Number of shop order material plans, which are backflushed, for this shop order",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "ShopOrderMaterialPlanCount": {
+      "description": "Number of shop order material plans for this shop order",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "ShopOrderNumber": {
+      "description": "Unique number to indentify the shop order",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "ShopOrderNumberString": {
+      "description": "Unique number to indentify the shop order (as a string to allow OData filtering, e.g. $filter=substringof('123',ShopOrderNumberString) eq true",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ShopOrderParent": {
+      "description": "Shop order parent",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ShopOrderParentNumber": {
+      "description": "Shop order parent number",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "ShopOrderRoutingStepPlanCount": {
+      "description": "Number of shop order routing step plans for this shop order",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "Status": {
+      "description": "Indicates the status of the Shop Order: 10 Open, 20 In process, 30 Finished, 40 Completed",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "SubShopOrderCount": {
+      "description": "The count of material lines of this shop order, which have been linked to a sub order",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "Type": {
+      "description": "Type of shoporder: always 9040 Regular",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "Unit": {
+      "description": "Unit of the item created by this shop order",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "UnitDescription": {
+      "description": "Unit description of the unit of the item created by this shop order",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "Warehouse": {
+      "description": "Reference to the Warehouse associated with the Shop order",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "YourRef": {
+      "description": "Your reference (of the customer)",
+      "type": [
+        "null",
+        "string"
+      ]
+    }
+  }
+}

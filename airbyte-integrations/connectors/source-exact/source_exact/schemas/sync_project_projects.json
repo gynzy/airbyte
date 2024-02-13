@@ -60,6 +60,13 @@
         "boolean"
       ]
     },
+    "BlockInvoicing": {
+      "description": "Block invoicing",
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
     "BlockPlanning": {
       "description": "Block planning and reservations",
       "type": [
@@ -324,6 +331,13 @@
     },
     "Notes": {
       "description": "For additional information about projects",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "PaymentCondition": {
+      "description": "Payment condition code for this project",
       "type": [
         "null",
         "string"

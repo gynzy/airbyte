@@ -417,6 +417,27 @@
         "string"
       ]
     },
+    "SelectionCode": {
+      "description": "ID of selection code. Only supported by the Plus, Professional and Premium for Wholesale & Distribution and Manufacturing",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "SelectionCodeCode": {
+      "description": "Code of selection code",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "SelectionCodeDescription": {
+      "description": "Description of selection code",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
     "ShippingMethod": {
       "description": "Shipping method ID",
       "type": [

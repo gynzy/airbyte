@@ -337,10 +337,6 @@ class SyncCRMQuotationLines(ExactSyncStream):
     endpoint = "sync/CRM/QuotationLines"
 
 
-class SyncCRMQuotations(ExactSyncStream):
-    endpoint = "sync/CRM/Quotations"
-
-
 class SyncDeleted(ExactSyncStream):
     endpoint = "sync/Deleted"
 
@@ -367,6 +363,18 @@ class SyncFinancialTransactionLines(ExactSyncStream):
 
 class SyncHRMLeaveAbsenceHoursByDay(ExactSyncStream):
     endpoint = "sync/HRM/LeaveAbsenceHoursByDay"
+
+
+class SyncHRMScheduleEntries(ExactSyncStream):
+    endpoint = "sync/HRM/ScheduleEntries"
+
+
+class SyncHRMSchedules(ExactSyncStream):
+    endpoint = "sync/HRM/Schedules"
+
+
+class SyncInventoryItemStorageLocations(ExactSyncStream):
+    endpoint = "sync/Inventory/ItemStorageLocations"
 
 
 class SyncInventoryItemWarehouses(ExactSyncStream):
@@ -403,6 +411,18 @@ class SyncLogisticsSalesItemPrices(ExactSyncStream):
 
 class SyncLogisticsSupplierItem(ExactSyncStream):
     endpoint = "sync/Logistics/SupplierItem"
+
+
+class SyncManufacturingShopOrderMaterialPlans(ExactSyncStream):
+    endpoint = "sync/Manufacturing/ShopOrderMaterialPlans"
+
+
+class SyncManufacturingShopOrderRoutingStepPlans(ExactSyncStream):
+    endpoint = "sync/Manufacturing/ShopOrderRoutingStepPlans"
+
+
+class SyncManufacturingShopOrders(ExactSyncStream):
+    endpoint = "sync/Manufacturing/ShopOrders"
 
 
 class SyncProjectProjectPlanning(ExactSyncStream):
@@ -447,10 +467,6 @@ class SyncSalesOrderSalesOrderHeaders(ExactSyncStream):
 
 class SyncSalesOrderSalesOrderLines(ExactSyncStream):
     endpoint = "sync/SalesOrder/SalesOrderLines"
-
-
-class SyncSalesOrderSalesOrders(ExactSyncStream):
-    endpoint = "sync/SalesOrder/SalesOrders"
 
 
 class SyncSubscriptionSubscriptionLines(ExactSyncStream):

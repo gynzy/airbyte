@@ -1,18 +1,11 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
-  "title": "SyncInventoryItemWarehouses",
+  "title": "SyncInventoryItemStorageLocations",
   "additionalProperties": true,
   "properties": {
     "Timestamp": {
       "description": "Timestamp",
-      "type": [
-        "null",
-        "integer"
-      ]
-    },
-    "CountingCycle": {
-      "description": "Indicates the number of days for next cycle count.",
       "type": [
         "null",
         "integer"
@@ -35,27 +28,6 @@
     },
     "CreatorFullName": {
       "description": "Name of creator",
-      "type": [
-        "null",
-        "string"
-      ]
-    },
-    "DefaultStorageLocation": {
-      "description": "This is a default storage location",
-      "type": [
-        "null",
-        "string"
-      ]
-    },
-    "DefaultStorageLocationCode": {
-      "description": "Default storage location's code",
-      "type": [
-        "null",
-        "string"
-      ]
-    },
-    "DefaultStorageLocationDescription": {
-      "description": "Default storage location's description",
       "type": [
         "null",
         "string"
@@ -103,6 +75,13 @@
         "number"
       ]
     },
+    "MinimumStock": {
+      "description": "Minimum quantity of items that you want in warehouse",
+      "type": [
+        "null",
+        "number"
+      ]
+    },
     "Modified": {
       "description": "Last modified date",
       "type": [
@@ -125,57 +104,29 @@
         "string"
       ]
     },
-    "OrderPolicy": {
-      "description": "Order Policy options: 1-Lot for lot, 2-Fixed order quantity, 3-Min / Max, 4-Order",
+    "StorageLocation": {
+      "description": "This is a storage location",
       "type": [
         "null",
-        "integer"
+        "string"
       ]
     },
-    "Period": {
-      "description": "Period that work together with replenishment in MRP",
+    "StorageLocationCode": {
+      "description": "Storage location's code",
       "type": [
         "null",
-        "integer"
+        "string"
       ]
     },
-    "ReorderPoint": {
-      "description": "Quantity of items as an indication of when you need to reorder more stock for the warehouse",
+    "StorageLocationDescription": {
+      "description": "Storage location's description",
       "type": [
         "null",
-        "number"
+        "string"
       ]
     },
-    "ReorderQuantity": {
-      "description": "Reorder quantity that work together with replenishment in MRP",
-      "type": [
-        "null",
-        "number"
-      ]
-    },
-    "ReplenishmentType": {
-      "description": "Replenishment options: 1-Purchase, 2-Assemble, 3-Make, 4-Transfer, 5-No replenishment advice",
-      "type": [
-        "null",
-        "integer"
-      ]
-    },
-    "ReservedStock": {
-      "description": "The quantity in a back to back order process which is already received from the purchase order, but not yet delivered for the sales order.",
-      "type": [
-        "null",
-        "number"
-      ]
-    },
-    "SafetyStock": {
-      "description": "Minimum quantity of items you must have in stock",
-      "type": [
-        "null",
-        "number"
-      ]
-    },
-    "StorageLocationSequenceNumber": {
-      "description": "Sequence number of the item (Premium Only)",
+    "Type": {
+      "description": "Item storage location type options: 1-Pick location, 2-Bulk location",
       "type": [
         "null",
         "integer"

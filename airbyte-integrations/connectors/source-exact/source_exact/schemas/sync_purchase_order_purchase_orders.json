@@ -132,6 +132,13 @@
         "string"
       ]
     },
+    "CustomField": {
+      "description": "Custom field endpoint. Provided only for the Exact Online Premium users.",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
     "DeliveryAccount": {
       "description": "Reference to account for delivery",
       "type": [

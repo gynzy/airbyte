@@ -80,6 +80,7 @@ def parse_json_schema_from_table_row(table_row: TableRow) -> dict:
 
     soup = parse_url(table_row.documentation_url)
     title = table_row.service + soup.select_one("p#endpoint").text.strip().replace("/", "")
+    uri = soup.select_one("p#serviceUri").text.strip().replace(r"/api/v1/{division}/", "")
 
     soup_table = soup.select_one("table#referencetable")
 
@@ -144,6 +145,7 @@ def parse_json_schema_from_table_row(table_row: TableRow) -> dict:
         "$schema": "http://json-schema.org/draft-07/schema#",
         "type": "object",
         "title": title,
+        "uri": uri,
         "additionalProperties": True,
         # NOTE: descriptions are really extensive, not sure if they add a lot so for now disabled them
         # "description": soup.select_one("p#goodToKnow").text.strip(),
@@ -153,6 +155,11 @@ def parse_json_schema_from_table_row(table_row: TableRow) -> dict:
 
 def write_json_schema_file(json_schema: dict):
     """Write json schema to schemas/ directory."""
+
+    # Remove uri from schema as it's not part of the schema
+    # it is used to generate the class definition
+    json_schema = json_schema.copy()
+    del json_schema["uri"]
 
     source_name_pascal = json_schema["title"].replace("/", "_")
     source_name_snake = pascal_to_snake(source_name_pascal)
@@ -170,9 +177,8 @@ def generate_class_definition(json_schema: dict) -> str:
     source_name_pascal = json_schema["title"].replace("/", "")
 
     return f"""
-class {source_name_pascal}(ExactStream):
-    primary_key = "Timestamp"
-    endpoint = "{json_schema['title']}"
+class {source_name_pascal}(ExactSyncStream):
+    endpoint = "{json_schema['uri']}"
     """.strip()
 
 

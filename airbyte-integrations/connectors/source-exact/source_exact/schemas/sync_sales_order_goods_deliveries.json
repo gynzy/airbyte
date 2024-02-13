@@ -162,7 +162,7 @@
       ]
     },
     "ShippingMethod": {
-      "description": "Reference to shipping method",
+      "description": "Reference to shipping method. Define shipping method during POST, else it will be empty by default.",
       "type": [
         "null",
         "string"

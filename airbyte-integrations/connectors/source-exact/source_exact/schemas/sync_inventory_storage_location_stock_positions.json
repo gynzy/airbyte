@@ -46,6 +46,27 @@
         "string"
       ]
     },
+    "QuantityToPicked": {
+      "description": "To pick quantity",
+      "type": [
+        "null",
+        "number"
+      ]
+    },
+    "ReservedPick": {
+      "description": "To pick quantity with SerialBatch reserved",
+      "type": [
+        "null",
+        "number"
+      ]
+    },
+    "SerialBatchReservedStock": {
+      "description": "Reserved serial batch stock",
+      "type": [
+        "null",
+        "number"
+      ]
+    },
     "Stock": {
       "description": "Stock",
       "type": [

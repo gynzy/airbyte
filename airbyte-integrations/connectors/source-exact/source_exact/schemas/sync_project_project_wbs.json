@@ -148,7 +148,7 @@
       "format": "date-time"
     },
     "InvoiceMethod": {
-      "description": "The invoice method of the WBS. For activity: 2 = Fixed price, 3 = Time and Material, 4 = Non billable, 5 = Prepaid. For expense: 6 = Fixed, 7 = Rebill, 8 = Non re-billable",
+      "description": "The invoice method of the WBS. For activity: null = According to parent, 2 = Fixed price, 3 = Time and Material, 4 = Non billable, 5 = Prepaid. For expense: null = According to parent, 6 = Fixed, 7 = Rebill, 8 = Non re-billable",
       "type": [
         "null",
         "integer"

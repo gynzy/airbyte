@@ -81,6 +81,13 @@
         "integer"
       ]
     },
+    "AutomaticProcessProposedEntry": {
+      "description": "Automatically create entries for complete entry proposals",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
     "Blocked": {
       "description": "Indicates if the account is blocked",
       "type": [
@@ -344,7 +351,7 @@
       ]
     },
     "DeliveryAdvice": {
-      "description": "Allows a customer to do goods delivery based on setting complete, partial or partial no back order. Values:  0 = Partial, 1 = Complete,  2 = PartialNoBackOrder",
+      "description": "Allows a customer to do goods delivery based on setting complete, partial or partial no back order. Values:  0 = Partial,  1 = Complete,  2 = PartialNoBackOrder",
       "type": [
         "null",
         "integer"
@@ -390,6 +397,13 @@
       "type": [
         "null",
         "string"
+      ]
+    },
+    "EnableSalesPaymentLink": {
+      "description": "Indicates whether payment link is activated for sales",
+      "type": [
+        "null",
+        "boolean"
       ]
     },
     "EndDate": {
@@ -1037,6 +1051,13 @@
       "type": [
         "null",
         "boolean"
+      ]
+    },
+    "Source": {
+      "description": "CRM creation source",
+      "type": [
+        "null",
+        "integer"
       ]
     },
     "StartDate": {

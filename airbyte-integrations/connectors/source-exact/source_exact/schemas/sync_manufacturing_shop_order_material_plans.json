@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
-  "title": "SyncSalesSalesPriceListVolumeDiscounts",
+  "title": "SyncManufacturingShopOrderMaterialPlans",
   "additionalProperties": true,
   "properties": {
     "Timestamp": {
@@ -11,18 +11,18 @@
         "integer"
       ]
     },
-    "BasePrice": {
-      "description": "ID of the base price. If base price = use the standard sales price, it shows null. If base price = set sales price, it shows ID of the sales price within this volume discount.",
+    "Backflush": {
+      "description": "Indicates if this is a backflush step",
       "type": [
         "null",
-        "string"
+        "integer"
       ]
     },
-    "BasePriceAmount": {
-      "description": "Amount of the base price. If base price = use the standard sales price, it shows the latest item sales price.  If base price = set sales price, it shows the base price which defined in price list.",
+    "CalculatorType": {
+      "description": "Calculator type",
       "type": [
         "null",
-        "number"
+        "integer"
       ]
     },
     "Created": {
@@ -47,22 +47,22 @@
         "string"
       ]
     },
-    "Discount": {
-      "description": "Discount",
+    "Description": {
+      "description": "Description of the material",
       "type": [
         "null",
-        "number"
+        "string"
+      ]
+    },
+    "DetailDrawing": {
+      "description": "Detail drawing reference",
+      "type": [
+        "null",
+        "string"
       ]
     },
     "Division": {
       "description": "Division code",
-      "type": [
-        "null",
-        "integer"
-      ]
-    },
-    "EntryMethod": {
-      "description": "Indicates whether discount or the new price is leading : 1-Discount, 2-New price. Scenario 1. When entry method is Discount and use base price, Discounted price = (1 - SalesPriceListVolumeDiscounts.Discount) * SalesPriceListVolumeDiscounts.BasePriceAmount 2. When entry method is Discount and use Item's standard sales price, Discounted price = (1 - SalesPriceListVolumeDiscounts.Discount) * SalesItemPrices.Price 3. When entry method is New price, Discounted price = SalesPriceListVolumeDiscounts.NewPrice",
       "type": [
         "null",
         "integer"
@@ -76,45 +76,45 @@
       ]
     },
     "Item": {
-      "description": "Item ID",
+      "description": "Reference to Items table",
       "type": [
         "null",
         "string"
       ]
     },
     "ItemCode": {
-      "description": "Item code",
+      "description": "Item Code (material)",
       "type": [
         "null",
         "string"
       ]
     },
     "ItemDescription": {
-      "description": "Description of the item",
+      "description": "Description of Item (material)",
       "type": [
         "null",
         "string"
       ]
     },
-    "ItemGroup": {
-      "description": "Item group ID",
+    "ItemMaterial": {
+      "description": "Reference to BillOfMaterialMaterials",
       "type": [
         "null",
         "string"
       ]
     },
-    "ItemGroupCode": {
-      "description": "Item group code",
+    "ItemPictureUrl": {
+      "description": "URL of the material item's picture",
       "type": [
         "null",
         "string"
       ]
     },
-    "ItemGroupDescription": {
-      "description": "Item group description",
+    "LineNumber": {
+      "description": "Line number",
       "type": [
         "null",
-        "string"
+        "integer"
       ]
     },
     "Modified": {
@@ -139,46 +139,82 @@
         "string"
       ]
     },
-    "NewPrice": {
-      "description": "New price after discount",
-      "type": [
-        "null",
-        "number"
-      ]
-    },
-    "NumberOfItemsPerUnit": {
-      "description": "Number of the item per unit",
-      "type": [
-        "null",
-        "number"
-      ]
-    },
-    "PriceListCode": {
-      "description": "Code of the PriceList",
+    "Notes": {
+      "description": "Line notes",
       "type": [
         "null",
         "string"
       ]
     },
-    "PriceListDescription": {
-      "description": "Description of the PriceList",
-      "type": [
-        "null",
-        "string"
-      ]
-    },
-    "PriceListPeriod": {
-      "description": "Price list period ID",
-      "type": [
-        "null",
-        "string"
-      ]
-    },
-    "Quantity": {
-      "description": "Quantity",
+    "PlannedAmountFC": {
+      "description": "Planned amount in the currency of the transaction",
       "type": [
         "null",
         "number"
+      ]
+    },
+    "PlannedDate": {
+      "description": "Date that the material is required.",
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "PlannedPriceFC": {
+      "description": "Planned price of the material",
+      "type": [
+        "null",
+        "number"
+      ]
+    },
+    "PlannedQuantity": {
+      "description": "Intended total planned quantity of the material including waste",
+      "type": [
+        "null",
+        "number"
+      ]
+    },
+    "PlannedQuantityFactor": {
+      "description": "Intended quantity of the material per unit excluding waste",
+      "type": [
+        "null",
+        "number"
+      ]
+    },
+    "RoutingStepID": {
+      "description": "ID of the routing step.",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ShopOrder": {
+      "description": "Reference to ShopOrders table",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "Status": {
+      "description": "Line status",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "StatusDescription": {
+      "description": "Description of Status",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "Type": {
+      "description": "Type",
+      "type": [
+        "null",
+        "integer"
       ]
     },
     "Unit": {
@@ -189,10 +225,17 @@
       ]
     },
     "UnitDescription": {
-      "description": "Description of the unit",
+      "description": "Unit description",
       "type": [
         "null",
         "string"
+      ]
+    },
+    "WastePercentage": {
+      "description": "Waste percentage must be null or integer from 1 to 9999 (only available in Manufacturing Professional and Premium)",
+      "type": [
+        "null",
+        "number"
       ]
     }
   }

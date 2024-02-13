@@ -77,6 +77,20 @@
       ],
       "format": "date-time"
     },
+    "ExternalIDInt": {
+      "description": "Unique ID from external source. Eg. Exact Online HR",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "ExternalLeaveAbsenceType": {
+      "description": "Unique leave or absence type from external source. Eg. Exact Online HR",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
     "Hours": {
       "description": "Hours of leave or absence",
       "type": [

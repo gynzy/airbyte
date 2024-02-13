@@ -89,7 +89,7 @@
       ]
     },
     "ReservedStock": {
-      "description": "The quantity in a back to back order process which is already received from the purchase order, but not yet delivered for the sales order.",
+      "description": "Stock stored in the warehouse that is already reserved",
       "type": [
         "null",
         "number"

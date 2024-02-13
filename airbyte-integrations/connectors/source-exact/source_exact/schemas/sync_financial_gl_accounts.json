@@ -110,6 +110,13 @@
         "string"
       ]
     },
+    "CustomField": {
+      "description": "Custom field endpoint",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
     "Description": {
       "description": "Name of the G/L account. If Multilanguage featureset is enabled in the administration and the G/L account already has a set of termed description, this field is not allowed to change.",
       "type": [

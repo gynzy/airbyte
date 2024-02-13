@@ -1,0 +1,348 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "SyncManufacturingShopOrderRoutingStepPlans",
+  "additionalProperties": true,
+  "properties": {
+    "Timestamp": {
+      "description": "Timestamp",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "Account": {
+      "description": "Reference to Account providing the Outsourced item",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "AccountName": {
+      "description": "Account name",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "AccountNumber": {
+      "description": "Account number",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "AttendedPercentage": {
+      "description": "Attended Percentage",
+      "type": [
+        "null",
+        "number"
+      ]
+    },
+    "Backflush": {
+      "description": "Indicates if this is a backflush step",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "CostPerItem": {
+      "description": "Total cost / Shop order planned quantity",
+      "type": [
+        "null",
+        "number"
+      ]
+    },
+    "Created": {
+      "description": "Creation date",
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "Creator": {
+      "description": "User ID of creator",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "CreatorFullName": {
+      "description": "Name of creator",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "Description": {
+      "description": "Description of the operation",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "Division": {
+      "description": "Division code",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "EfficiencyPercentage": {
+      "description": "Efficiency Percentage",
+      "type": [
+        "null",
+        "number"
+      ]
+    },
+    "FactorType": {
+      "description": "Conversion factor type between Shop order Item and Subcontract purchase Unit",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "ID": {
+      "description": "Primary key",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ItemRoutingStep": {
+      "description": "Reference to BillOfMaterialRoutings",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "LineNumber": {
+      "description": "Sequential order of the operation",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "Modified": {
+      "description": "Last modified date",
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "Modifier": {
+      "description": "User ID of modifier",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ModifierFullName": {
+      "description": "Name of modifier",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "Notes": {
+      "description": "Notes",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "Operation": {
+      "description": "Reference to Operations",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "OperationCode": {
+      "description": "Code of the routing step operation",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "OperationDescription": {
+      "description": "Description of the operation step",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "OperationResource": {
+      "description": "Reference to OperationResources",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "PlannedEndDate": {
+      "description": "Planned end date",
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "PlannedRunHours": {
+      "description": "Planned run hours",
+      "type": [
+        "null",
+        "number"
+      ]
+    },
+    "PlannedSetupHours": {
+      "description": "Planned setup hours",
+      "type": [
+        "null",
+        "number"
+      ]
+    },
+    "PlannedStartDate": {
+      "description": "Planned start date",
+      "type": [
+        "null",
+        "string"
+      ],
+      "format": "date-time"
+    },
+    "PlannedTotalHours": {
+      "description": "Setup hours + Run hours",
+      "type": [
+        "null",
+        "number"
+      ]
+    },
+    "PurchaseUnit": {
+      "description": "Reference to Units",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "PurchaseUnitFactor": {
+      "description": "Purchase Unit Factor",
+      "type": [
+        "null",
+        "number"
+      ]
+    },
+    "PurchaseUnitPriceFC": {
+      "description": "Purchase Unit Price in the currency of the transaction",
+      "type": [
+        "null",
+        "number"
+      ]
+    },
+    "PurchaseUnitQuantity": {
+      "description": "Purchase unit quantity of the plan",
+      "type": [
+        "null",
+        "number"
+      ]
+    },
+    "RoutingStepType": {
+      "description": "Reference to RoutingStepTypes",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "Run": {
+      "description": "Used in conjunction with RunMethod, and EfficiencyPercentage to determine PlannedRunHours",
+      "type": [
+        "null",
+        "number"
+      ]
+    },
+    "RunMethod": {
+      "description": "Reference to OperationMethod",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "RunMethodDescription": {
+      "description": "Description of RunMethod",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "Setup": {
+      "description": "Used in conjunction with SetupCount and Setup Unit to determine PlannedSetupHours",
+      "type": [
+        "null",
+        "number"
+      ]
+    },
+    "SetupUnit": {
+      "description": "Reference to TimeUnits",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "ShopOrder": {
+      "description": "Reference to Shop orders",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "Status": {
+      "description": "Reference to OperationStatus",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "StatusDescription": {
+      "description": "Description of Status",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "SubcontractedLeadDays": {
+      "description": "Subcontracted lead days",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
+    "TotalCostDC": {
+      "description": "Total cost of the routing line",
+      "type": [
+        "null",
+        "number"
+      ]
+    },
+    "Workcenter": {
+      "description": "Reference to Workcenters",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "WorkcenterCode": {
+      "description": "Workcenter code",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "WorkcenterDescription": {
+      "description": "Workcenter description",
+      "type": [
+        "null",
+        "string"
+      ]
+    }
+  }
+}

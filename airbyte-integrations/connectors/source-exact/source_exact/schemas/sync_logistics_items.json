@@ -11,6 +11,13 @@
         "integer"
       ]
     },
+    "AssembledLeadDays": {
+      "description": "Assembly lead days",
+      "type": [
+        "null",
+        "integer"
+      ]
+    },
     "AverageCost": {
       "description": "The current average cost price",
       "type": [
@@ -23,6 +30,13 @@
       "type": [
         "null",
         "string"
+      ]
+    },
+    "BatchQuantity": {
+      "description": "Batch quantity",
+      "type": [
+        "null",
+        "number"
       ]
     },
     "Class_01": {
@@ -746,6 +760,13 @@
       "type": [
         "null",
         "string"
+      ]
+    },
+    "UseExplosion": {
+      "description": "Assemble at delivery",
+      "type": [
+        "null",
+        "integer"
       ]
     }
   }
