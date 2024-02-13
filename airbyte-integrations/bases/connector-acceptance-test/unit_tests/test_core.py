@@ -7,24 +7,37 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from _pytest.outcomes import Failed
-from airbyte_cdk.models import (
+from airbyte_protocol.models import (
     AirbyteErrorTraceMessage,
     AirbyteLogMessage,
     AirbyteMessage,
     AirbyteRecordMessage,
     AirbyteStream,
+    AirbyteStreamStatus,
+    AirbyteStreamStatusTraceMessage,
     AirbyteTraceMessage,
     ConfiguredAirbyteCatalog,
     ConfiguredAirbyteStream,
     Level,
+    StreamDescriptor,
     SyncMode,
     TraceType,
     Type,
 )
-from connector_acceptance_test.config import BasicReadTestConfig, Config, ExpectedRecordsConfig, IgnoredFieldsConfiguration
+from connector_acceptance_test.config import (
+    BasicReadTestConfig,
+    Config,
+    ExpectedRecordsConfig,
+    FileTypesConfig,
+    IgnoredFieldsConfiguration,
+    UnsupportedFileTypeConfig,
+)
 from connector_acceptance_test.tests import test_core
+from jsonschema.exceptions import SchemaError
 
 from .conftest import does_not_raise
+
+pytestmark = pytest.mark.anyio
 
 
 @pytest.mark.parametrize(
@@ -55,6 +68,99 @@ def test_discovery(schema, cursors, should_fail):
             t.test_defined_cursors_exist_in_schema(discovered_catalog)
     else:
         t.test_defined_cursors_exist_in_schema(discovered_catalog)
+
+
+def test_discovery_uniquely_named_streams():
+    t = test_core.TestDiscovery()
+    stream_a = AirbyteStream.parse_obj(
+        {
+            "name": "test_stream",
+            "json_schema": {"properties": {"created": {"type": "string"}}},
+            "default_cursor_field": ["created"],
+            "supported_sync_modes": ["full_refresh", "incremental"],
+        }
+    )
+    streams = [stream_a, stream_a]
+    assert t.duplicated_stream_names(streams) == ["test_stream"]
+    streams.pop()
+    assert len(t.duplicated_stream_names(streams)) == 0
+
+
+@pytest.mark.parametrize(
+    "schema, should_fail",
+    [
+        (
+            {
+                "$schema": "https://json-schema.org/draft-07/schema#",
+                "type": ["null", "object"],
+                "properties": {
+                    "amount": {
+                        "type": ["null", "integer"]
+                    },
+                    "amount_details": {
+                        "type": ["null", "object"],
+                        "properties": {
+                            "atm_fee": ["null", "integer"]
+                        }
+                    }
+                }
+            },
+            True
+        ),
+        (
+            {
+                "$schema": "https://json-schema.org/draft-07/schema#",
+                "type": ["null", "object"],
+                "properties": {
+                    "amount": "integer",
+                    "amount_details": {
+                        "type": ["null", "object"],
+                        "properties": {
+                            "atm_fee": {
+                                "type": ["null", "integer"]
+                            }
+                        }
+                    }
+                }
+            },
+            True
+        ),
+        (
+            {
+                "$schema": "https://json-schema.org/draft-07/schema#",
+                "type": ["null", "object"],
+                "properties": {
+                    "amount": {
+                        "type": ["null", "integer"]
+                    },
+                    "amount_details": {
+                        "type": ["null", "object"],
+                        "properties": {
+                            "atm_fee": {
+                                "type": ["null", "integer"]
+                            }
+                        }
+                    }
+                }
+            },
+            False
+        )
+    ],
+)
+def test_streams_have_valid_json_schemas(schema, should_fail):
+    t = test_core.TestDiscovery()
+    discovered_catalog = {
+        "test_stream": AirbyteStream.parse_obj(
+            {
+                "name": "test_stream",
+                "json_schema": schema,
+                "supported_sync_modes": ["full_refresh", "incremental"],
+            }
+        )
+    }
+    expectation = pytest.raises(SchemaError) if should_fail else does_not_raise()
+    with expectation:
+        t.test_streams_have_valid_json_schemas(discovered_catalog)
 
 
 @pytest.mark.parametrize(
@@ -562,7 +668,7 @@ def test_configured_catalog_fixture(mocker, test_strictness_level, configured_ca
         ),
     ],
 )
-def test_read(schema, ignored_fields, expect_records_config, record, expected_records_by_stream, expectation):
+async def test_read(mocker, schema, ignored_fields, expect_records_config, record, expected_records_by_stream, expectation):
     configured_catalog = ConfiguredAirbyteCatalog(
         streams=[
             ConfiguredAirbyteStream(
@@ -572,24 +678,27 @@ def test_read(schema, ignored_fields, expect_records_config, record, expected_re
             )
         ]
     )
-    docker_runner_mock = MagicMock()
-    docker_runner_mock.call_read.return_value = [
-        AirbyteMessage(type=Type.RECORD, record=AirbyteRecordMessage(stream="test_stream", data=record, emitted_at=111))
-    ]
+    docker_runner_mock = mocker.MagicMock(
+        call_read=mocker.AsyncMock(
+            return_value=[AirbyteMessage(type=Type.RECORD, record=AirbyteRecordMessage(stream="test_stream", data=record, emitted_at=111))]
+        )
+    )
     t = test_core.TestBasicRead()
     with expectation:
-        t.test_read(
+        await t.test_read(
             connector_config=None,
             configured_catalog=configured_catalog,
             expect_records_config=expect_records_config,
             should_validate_schema=True,
             should_validate_data_points=False,
+            should_validate_stream_statuses=False,
             should_fail_on_extra_columns=False,
             empty_streams=set(),
             expected_records_by_stream=expected_records_by_stream,
             docker_runner=docker_runner_mock,
             ignored_fields=ignored_fields,
             detailed_logger=MagicMock(),
+            certified_file_based_connector=False,
         )
 
 
@@ -603,7 +712,9 @@ def test_read(schema, ignored_fields, expect_records_config, record, expected_re
     ],
 )
 @pytest.mark.parametrize("additional_properties", [True, False, None])
-def test_fail_on_extra_columns(config_fail_on_extra_columns, record_has_unexpected_column, expectation_should_fail, additional_properties):
+async def test_fail_on_extra_columns(
+    mocker, config_fail_on_extra_columns, record_has_unexpected_column, expectation_should_fail, additional_properties
+):
     schema = {"type": "object", "properties": {"field_1": {"type": ["string"]}, "field_2": {"type": ["string"]}}}
     if additional_properties:
         schema["additionalProperties"] = additional_properties
@@ -621,25 +732,29 @@ def test_fail_on_extra_columns(config_fail_on_extra_columns, record_has_unexpect
             )
         ]
     )
-    docker_runner_mock = MagicMock()
-    docker_runner_mock.call_read.return_value = [
-        AirbyteMessage(type=Type.RECORD, record=AirbyteRecordMessage(stream="test_stream", data=record, emitted_at=111))
-    ]
+    docker_runner_mock = mocker.MagicMock(
+        call_read=mocker.AsyncMock(
+            return_value=[AirbyteMessage(type=Type.RECORD, record=AirbyteRecordMessage(stream="test_stream", data=record, emitted_at=111))]
+        )
+    )
+
     t = test_core.TestBasicRead()
     if expectation_should_fail:
         with pytest.raises(Failed, match="test_stream"):
-            t.test_read(
+            await t.test_read(
                 connector_config=None,
                 configured_catalog=configured_catalog,
                 expect_records_config=ExpectedRecordsConfig(path="foobar"),
                 should_validate_schema=True,
                 should_validate_data_points=False,
+                should_validate_stream_statuses=False,
                 should_fail_on_extra_columns=config_fail_on_extra_columns,
                 empty_streams=set(),
                 expected_records_by_stream={},
                 docker_runner=docker_runner_mock,
                 ignored_fields=None,
                 detailed_logger=MagicMock(),
+                certified_file_based_connector=False,
             )
     else:
         t.test_read(
@@ -648,12 +763,14 @@ def test_fail_on_extra_columns(config_fail_on_extra_columns, record_has_unexpect
             expect_records_config=ExpectedRecordsConfig(path="foobar"),
             should_validate_schema=True,
             should_validate_data_points=False,
+            should_validate_stream_statuses=False,
             should_fail_on_extra_columns=config_fail_on_extra_columns,
             empty_streams=set(),
             expected_records_by_stream={},
             docker_runner=docker_runner_mock,
             ignored_fields=None,
             detailed_logger=MagicMock(),
+            certified_file_based_connector=False,
         )
 
 
@@ -732,18 +849,17 @@ def test_fail_on_extra_columns(config_fail_on_extra_columns, record_has_unexpect
         ([], False, False),
     ],
 )
-def test_airbyte_trace_message_on_failure(output, expect_trace_message_on_failure, should_fail):
+async def test_airbyte_trace_message_on_failure(mocker, output, expect_trace_message_on_failure, should_fail):
     t = test_core.TestBasicRead()
     input_config = BasicReadTestConfig(expect_trace_message_on_failure=expect_trace_message_on_failure)
-    docker_runner_mock = MagicMock()
-    docker_runner_mock.call_read.return_value = output
+    docker_runner_mock = mocker.MagicMock(call_read=mocker.AsyncMock(return_value=output))
 
     with patch.object(pytest, "skip", return_value=None):
         if should_fail:
             with pytest.raises(AssertionError, match="Connector should emit at least one error trace message"):
-                t.test_airbyte_trace_message_on_failure(None, input_config, docker_runner_mock)
+                await t.test_airbyte_trace_message_on_failure(None, input_config, docker_runner_mock)
         else:
-            t.test_airbyte_trace_message_on_failure(None, input_config, docker_runner_mock)
+            await t.test_airbyte_trace_message_on_failure(None, input_config, docker_runner_mock)
 
 
 @pytest.mark.parametrize(
@@ -1219,3 +1335,348 @@ def test_validate_field_appears_at_least_once(records, configured_catalog, expec
             t._validate_field_appears_at_least_once(records=records, configured_catalog=configured_catalog)
     else:
         t._validate_field_appears_at_least_once(records=records, configured_catalog=configured_catalog)
+
+
+async def test_read_validate_async_output_stream_statuses(mocker):
+    configured_catalog = ConfiguredAirbyteCatalog(
+        streams=[
+            ConfiguredAirbyteStream(
+                stream=AirbyteStream.parse_obj({"name": f"test_stream_{x}", "json_schema": {}, "supported_sync_modes": ["full_refresh"]}),
+                sync_mode="full_refresh",
+                destination_sync_mode="overwrite",
+            )
+            for x in range(3)
+        ]
+    )
+    async_stream_output = [
+        AirbyteMessage(
+            type=Type.TRACE,
+            trace=AirbyteTraceMessage(
+                type=TraceType.STREAM_STATUS,
+                emitted_at=1,
+                stream_status=AirbyteStreamStatusTraceMessage(
+                    stream_descriptor=StreamDescriptor(name="test_stream_0"), status=AirbyteStreamStatus.STARTED
+                ),
+            ),
+        ),
+        AirbyteMessage(
+            type=Type.TRACE,
+            trace=AirbyteTraceMessage(
+                type=TraceType.STREAM_STATUS,
+                emitted_at=1,
+                stream_status=AirbyteStreamStatusTraceMessage(
+                    stream_descriptor=StreamDescriptor(name="test_stream_2"), status=AirbyteStreamStatus.STARTED
+                ),
+            ),
+        ),
+        AirbyteMessage(
+            type=Type.TRACE,
+            trace=AirbyteTraceMessage(
+                type=TraceType.STREAM_STATUS,
+                emitted_at=1,
+                stream_status=AirbyteStreamStatusTraceMessage(
+                    stream_descriptor=StreamDescriptor(name="test_stream_1"), status=AirbyteStreamStatus.STARTED
+                ),
+            ),
+        ),
+        AirbyteMessage(type=Type.RECORD, record=AirbyteRecordMessage(stream="test_stream_0", data={"a": 1}, emitted_at=111)),
+        AirbyteMessage(type=Type.RECORD, record=AirbyteRecordMessage(stream="test_stream_1", data={"a": 1}, emitted_at=112)),
+        AirbyteMessage(type=Type.RECORD, record=AirbyteRecordMessage(stream="test_stream_2", data={"a": 1}, emitted_at=113)),
+        AirbyteMessage(
+            type=Type.TRACE,
+            trace=AirbyteTraceMessage(
+                type=TraceType.STREAM_STATUS,
+                emitted_at=114,
+                stream_status=AirbyteStreamStatusTraceMessage(
+                    stream_descriptor=StreamDescriptor(name="test_stream_1"), status=AirbyteStreamStatus.RUNNING
+                ),
+            ),
+        ),
+        AirbyteMessage(
+            type=Type.TRACE,
+            trace=AirbyteTraceMessage(
+                type=TraceType.STREAM_STATUS,
+                emitted_at=114,
+                stream_status=AirbyteStreamStatusTraceMessage(
+                    stream_descriptor=StreamDescriptor(name="test_stream_2"), status=AirbyteStreamStatus.RUNNING
+                ),
+            ),
+        ),
+        AirbyteMessage(
+            type=Type.TRACE,
+            trace=AirbyteTraceMessage(
+                type=TraceType.STREAM_STATUS,
+                emitted_at=114,
+                stream_status=AirbyteStreamStatusTraceMessage(
+                    stream_descriptor=StreamDescriptor(name="test_stream_0"), status=AirbyteStreamStatus.RUNNING
+                ),
+            ),
+        ),
+        AirbyteMessage(
+            type=Type.TRACE,
+            trace=AirbyteTraceMessage(
+                type=TraceType.STREAM_STATUS,
+                emitted_at=115,
+                stream_status=AirbyteStreamStatusTraceMessage(
+                    stream_descriptor=StreamDescriptor(name="test_stream_1"), status=AirbyteStreamStatus.RUNNING
+                ),
+            ),
+        ),
+        AirbyteMessage(
+            type=Type.TRACE,
+            trace=AirbyteTraceMessage(
+                type=TraceType.STREAM_STATUS,
+                emitted_at=115,
+                stream_status=AirbyteStreamStatusTraceMessage(
+                    stream_descriptor=StreamDescriptor(name="test_stream_2"), status=AirbyteStreamStatus.COMPLETE
+                ),
+            ),
+        ),
+        AirbyteMessage(
+            type=Type.TRACE,
+            trace=AirbyteTraceMessage(
+                type=TraceType.STREAM_STATUS,
+                emitted_at=116,
+                stream_status=AirbyteStreamStatusTraceMessage(
+                    stream_descriptor=StreamDescriptor(name="test_stream_1"), status=AirbyteStreamStatus.COMPLETE
+                ),
+            ),
+        ),
+        AirbyteMessage(
+            type=Type.TRACE,
+            trace=AirbyteTraceMessage(
+                type=TraceType.STREAM_STATUS,
+                emitted_at=120,
+                stream_status=AirbyteStreamStatusTraceMessage(
+                    stream_descriptor=StreamDescriptor(name="test_stream_0"), status=AirbyteStreamStatus.COMPLETE
+                ),
+            ),
+        ),
+    ]
+    docker_runner_mock = mocker.MagicMock(call_read=mocker.AsyncMock(return_value=async_stream_output))
+
+    t = test_core.TestBasicRead()
+    await t.test_read(
+        connector_config=None,
+        configured_catalog=configured_catalog,
+        expect_records_config=ExpectedRecordsConfig(path="foobar"),
+        should_validate_schema=False,
+        should_validate_data_points=False,
+        should_validate_stream_statuses=True,
+        should_fail_on_extra_columns=False,
+        empty_streams=set(),
+        expected_records_by_stream={},
+        docker_runner=docker_runner_mock,
+        ignored_fields=None,
+        detailed_logger=MagicMock(),
+        certified_file_based_connector=False,
+    )
+
+
+@pytest.mark.parametrize(
+    "output",
+    [
+        (AirbyteMessage(type=Type.RECORD, record=AirbyteRecordMessage(stream="test_stream_0", data={"a": 1}, emitted_at=111)),),
+        (
+            AirbyteMessage(
+                type=Type.TRACE,
+                trace=AirbyteTraceMessage(
+                    type=TraceType.STREAM_STATUS,
+                    emitted_at=1,
+                    stream_status=AirbyteStreamStatusTraceMessage(
+                        stream_descriptor=StreamDescriptor(name="test_stream_0"), status=AirbyteStreamStatus.STARTED
+                    ),
+                ),
+            ),
+            AirbyteMessage(type=Type.RECORD, record=AirbyteRecordMessage(stream="test_stream_0", data={"a": 1}, emitted_at=111)),
+        ),
+        (
+            AirbyteMessage(
+                type=Type.TRACE,
+                trace=AirbyteTraceMessage(
+                    type=TraceType.STREAM_STATUS,
+                    emitted_at=1,
+                    stream_status=AirbyteStreamStatusTraceMessage(
+                        stream_descriptor=StreamDescriptor(name="test_stream_0"), status=AirbyteStreamStatus.STARTED
+                    ),
+                ),
+            ),
+            AirbyteMessage(type=Type.RECORD, record=AirbyteRecordMessage(stream="test_stream_0", data={"a": 1}, emitted_at=111)),
+            AirbyteMessage(
+                type=Type.TRACE,
+                trace=AirbyteTraceMessage(
+                    type=TraceType.STREAM_STATUS,
+                    emitted_at=2,
+                    stream_status=AirbyteStreamStatusTraceMessage(
+                        stream_descriptor=StreamDescriptor(name="test_stream_0"), status=AirbyteStreamStatus.RUNNING
+                    ),
+                ),
+            ),
+        ),
+        (
+            AirbyteMessage(type=Type.RECORD, record=AirbyteRecordMessage(stream="test_stream_0", data={"a": 1}, emitted_at=111)),
+            AirbyteMessage(
+                type=Type.TRACE,
+                trace=AirbyteTraceMessage(
+                    type=TraceType.STREAM_STATUS,
+                    emitted_at=2,
+                    stream_status=AirbyteStreamStatusTraceMessage(
+                        stream_descriptor=StreamDescriptor(name="test_stream_0"), status=AirbyteStreamStatus.RUNNING
+                    ),
+                ),
+            ),
+        ),
+        (
+            AirbyteMessage(type=Type.RECORD, record=AirbyteRecordMessage(stream="test_stream_0", data={"a": 1}, emitted_at=111)),
+            AirbyteMessage(
+                type=Type.TRACE,
+                trace=AirbyteTraceMessage(
+                    type=TraceType.STREAM_STATUS,
+                    emitted_at=2,
+                    stream_status=AirbyteStreamStatusTraceMessage(
+                        stream_descriptor=StreamDescriptor(name="test_stream_0"), status=AirbyteStreamStatus.COMPLETE
+                    ),
+                ),
+            ),
+        ),
+    ],
+    ids=["no_statuses", "only_started_present", "only_started_and_running_present", "only_running", "only_complete"],
+)
+async def test_read_validate_stream_statuses_exceptions(mocker, output):
+    configured_catalog = ConfiguredAirbyteCatalog(
+        streams=[
+            ConfiguredAirbyteStream(
+                stream=AirbyteStream.parse_obj({"name": f"test_stream_0", "json_schema": {}, "supported_sync_modes": ["full_refresh"]}),
+                sync_mode="full_refresh",
+                destination_sync_mode="overwrite",
+            )
+        ]
+    )
+    docker_runner_mock = mocker.MagicMock(call_read=mocker.AsyncMock(return_value=output))
+
+    t = test_core.TestBasicRead()
+    with pytest.raises(AssertionError):
+        await t.test_read(
+            connector_config=None,
+            configured_catalog=configured_catalog,
+            expect_records_config=ExpectedRecordsConfig(path="foobar"),
+            should_validate_schema=False,
+            should_validate_data_points=False,
+            should_validate_stream_statuses=True,
+            should_fail_on_extra_columns=False,
+            empty_streams=set(),
+            expected_records_by_stream={},
+            docker_runner=docker_runner_mock,
+            ignored_fields=None,
+            detailed_logger=MagicMock(),
+            certified_file_based_connector=False,
+        )
+
+
+@pytest.mark.parametrize(
+    "metadata, expected_file_based, is_connector_certified",
+    [
+        ({"data": {"connectorSubtype": "file", "ab_internal": {"ql": 400}}}, True, True),
+        ({"data": {"connectorSubtype": "file", "ab_internal": {"ql": 500}}}, True, True),
+        ({}, False, False),
+        ({"data": {"ab_internal": {}}}, False, False),
+        ({"data": {"ab_internal": {"ql": 400}}}, False, False),
+        ({"data": {"connectorSubtype": "file"}}, False, False),
+        ({"data": {"connectorSubtype": "file", "ab_internal": {"ql": 200}}}, False, False),
+        ({"data": {"connectorSubtype": "not_file", "ab_internal": {"ql": 400}}}, False, False),
+    ],
+)
+def test_is_certified_file_based_connector(metadata, is_connector_certified, expected_file_based):
+    t = test_core.TestBasicRead()
+    assert test_core.TestBasicRead.is_certified_file_based_connector.__wrapped__(t, metadata, is_connector_certified) is expected_file_based
+
+
+@pytest.mark.parametrize(
+    ("file_name", "expected_extension"),
+    (
+        ("test.csv", ".csv"),
+        ("test/directory/test.csv", ".csv"),
+        ("test/directory/test.CSV", ".csv"),
+        ("test/directory/", ""),
+        (".bashrc", ""),
+        ("", ""),
+    ),
+)
+def test_get_file_extension(file_name, expected_extension):
+    t = test_core.TestBasicRead()
+    assert t._get_file_extension(file_name) == expected_extension
+
+
+@pytest.mark.parametrize(
+    ("records", "expected_file_types"),
+    (
+        ([], set()),
+        (
+            [
+                AirbyteRecordMessage(stream="stream", data={"field": "value", "_ab_source_file_url": "test.csv"}, emitted_at=111),
+                AirbyteRecordMessage(stream="stream", data={"field": "value", "_ab_source_file_url": "test_2.pdf"}, emitted_at=111),
+                AirbyteRecordMessage(stream="stream", data={"field": "value", "_ab_source_file_url": "test_3.pdf"}, emitted_at=111),
+                AirbyteRecordMessage(stream="stream", data={"field": "value", "_ab_source_file_url": "test_3.CSV"}, emitted_at=111),
+            ],
+            {".csv", ".pdf"},
+        ),
+        (
+            [
+                AirbyteRecordMessage(stream="stream", data={"field": "value"}, emitted_at=111),
+                AirbyteRecordMessage(stream="stream", data={"field": "value", "_ab_source_file_url": ""}, emitted_at=111),
+                AirbyteRecordMessage(stream="stream", data={"field": "value", "_ab_source_file_url": ".bashrc"}, emitted_at=111),
+            ],
+            {""},
+        ),
+    ),
+)
+def test_get_actual_file_types(records, expected_file_types):
+    t = test_core.TestBasicRead()
+    assert t._get_actual_file_types(records) == expected_file_types
+
+
+@pytest.mark.parametrize(
+    ("config", "expected_file_types"),
+    (
+        ([], set()),
+        ([UnsupportedFileTypeConfig(extension=".csv"), UnsupportedFileTypeConfig(extension=".pdf")], {".csv", ".pdf"}),
+        ([UnsupportedFileTypeConfig(extension=".CSV")], {".csv"}),
+    ),
+)
+def test_get_unsupported_file_types(config, expected_file_types):
+    t = test_core.TestBasicRead()
+    assert t._get_unsupported_file_types(config) == expected_file_types
+
+
+@pytest.mark.parametrize(
+    ("is_file_based_connector", "skip_test"),
+    ((False, True), (False, False), (True, True)),
+)
+async def test_all_supported_file_types_present_skipped(mocker, is_file_based_connector, skip_test):
+    mocker.patch.object(test_core.pytest, "skip")
+    mocker.patch.object(test_core.TestBasicRead, "_file_types", {".avro", ".csv", ".jsonl", ".parquet", ".pdf"})
+
+    t = test_core.TestBasicRead()
+    config = BasicReadTestConfig(config_path="config_path", file_types=FileTypesConfig(skip_test=skip_test))
+    await t.test_all_supported_file_types_present(is_file_based_connector, config)
+    test_core.pytest.skip.assert_called_once()
+
+
+@pytest.mark.parametrize(
+    ("file_types_found", "should_fail"),
+    (
+        ({".avro", ".csv", ".jsonl", ".parquet", ".pdf"}, False),
+        ({".csv", ".jsonl", ".parquet", ".pdf"}, True),
+        ({".avro", ".csv", ".jsonl", ".parquet"}, True),
+    ),
+)
+async def test_all_supported_file_types_present(mocker, file_types_found, should_fail):
+    mocker.patch.object(test_core.TestBasicRead, "_file_types", file_types_found)
+    t = test_core.TestBasicRead()
+    config = BasicReadTestConfig(config_path="config_path", file_types=FileTypesConfig(skip_test=False))
+
+    if should_fail:
+        with pytest.raises(AssertionError) as e:
+            await t.test_all_supported_file_types_present(certified_file_based_connector=True, inputs=config)
+    else:
+        await t.test_all_supported_file_types_present(certified_file_based_connector=True, inputs=config)

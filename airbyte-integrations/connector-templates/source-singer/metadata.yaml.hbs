@@ -4,6 +4,8 @@ data:
       - TODO # Please change to the hostname of the source.
   registries:
     oss:
+      enabled: true
+    cloud:
       enabled: false
   connectorSubtype: api
   connectorType: source
@@ -15,6 +17,7 @@ data:
   license: MIT
   name: {{capitalCase name}}
   releaseDate: TODO
+  supportLevel: community
   releaseStage: alpha
   documentationUrl: https://docs.airbyte.com/integrations/sources/{{dashCase name}}
   tags:
