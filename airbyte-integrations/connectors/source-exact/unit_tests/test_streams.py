@@ -84,9 +84,10 @@ def test_request_params_with_next_page(config_oauth: dict):
 )
 def test_request_params_with_sync_stream(config_oauth: dict, next_page_token, cursor_value, expected):
     stream = MyTestExactSyncStream(config_oauth)
-    stream.state = {"456": { "Timestamp": cursor_value } }
+    stream.state = {"456": {"Timestamp": cursor_value}}
 
     assert stream.request_params(next_page_token, {"division": "456"}) == expected
+
 
 @pytest.mark.parametrize(
     "next_page_token, cursor_value, expected",
@@ -94,20 +95,41 @@ def test_request_params_with_sync_stream(config_oauth: dict, next_page_token, cu
         ("token", None, {}),
         ("token", "2022-12-12T00:00:00+00:00", {}),
         (None, None, {"$orderby": "Modified asc", "$select": "ID,Modified"}),
-        (None, "2022-12-12T00:00:00+00:00", {"$filter": "Modified gt datetime'2022-12-12T01:00:00'", "$orderby": "Modified asc", "$select": "ID,Modified",}),
+        (
+            None,
+            "2022-12-12T00:00:00+00:00",
+            {
+                "$filter": "Modified gt datetime'2022-12-12T01:00:00'",
+                "$orderby": "Modified asc",
+                "$select": "ID,Modified",
+            },
+        ),
         # Test if resilient to other types of formatting
-        (None, "2022-12-12T00:00:00Z", {"$filter": "Modified gt datetime'2022-12-12T01:00:00'", "$orderby": "Modified asc", "$select": "ID,Modified"}),
+        (
+            None,
+            "2022-12-12T00:00:00Z",
+            {"$filter": "Modified gt datetime'2022-12-12T01:00:00'", "$orderby": "Modified asc", "$select": "ID,Modified"},
+        ),
         # Should not happen: input is a timestamp not in UTC! A warning is logged.
-        (None, "2022-12-12T00:00:00+01:00", {"$filter": "Modified gt datetime'2022-12-12T00:00:00'", "$orderby": "Modified asc", "$select": "ID,Modified"}),
+        (
+            None,
+            "2022-12-12T00:00:00+01:00",
+            {"$filter": "Modified gt datetime'2022-12-12T00:00:00'", "$orderby": "Modified asc", "$select": "ID,Modified"},
+        ),
         # Test if UTC is correctly handled in summer time
-        (None, "2022-06-12T00:00:00+00:00", {"$filter": "Modified gt datetime'2022-06-12T02:00:00'", "$orderby": "Modified asc", "$select": "ID,Modified"}),
+        (
+            None,
+            "2022-06-12T00:00:00+00:00",
+            {"$filter": "Modified gt datetime'2022-06-12T02:00:00'", "$orderby": "Modified asc", "$select": "ID,Modified"},
+        ),
     ],
 )
 def test_request_params_with_other_stream(config_oauth: dict, next_page_token, cursor_value, expected):
     stream = MyTestExactOtherStream(config_oauth)
-    stream.state = {"456": { "Modified": cursor_value } }
+    stream.state = {"456": {"Modified": cursor_value}}
 
     assert stream.request_params(next_page_token, {"division": "456"}) == expected
+
 
 @pytest.mark.parametrize(
     "body, expected",
@@ -168,14 +190,14 @@ def test_parse_item__nested_timestamps(config_oauth: dict):
     # of timestamps are parsed correctly.
 
     obj = {
-        "date": "/Date(1640995200000)/", # 2022-01-01T00:00:00+00:00 in CET wintertime (UTC +1 hours)
+        "date": "/Date(1640995200000)/",  # 2022-01-01T00:00:00+00:00 in CET wintertime (UTC +1 hours)
         "nested": {
-            "date": "/Date(1640995200000)/", # 2022-01-01T00:00:00+00:00 in CET wintertime (UTC +1 hours)
+            "date": "/Date(1640995200000)/",  # 2022-01-01T00:00:00+00:00 in CET wintertime (UTC +1 hours)
         },
-        "array": ["/Date(1640995200000)/"], # 2022-01-01T00:00:00+00:00 in CET wintertime (UTC +1 hours)
-        "array_with_nested": [{"date": "/Date(1640995200000)/"}], # 2022-01-01T00:00:00+00:00 in CET wintertime (UTC +1 hours)
-        "date_summer": "/Date(1655894855020)/", # 2022-06-22T10:47:35.02 in CET summertime (UTC +2 hours)
-        "date_winter": "/Date(1669134984190)/", # 2022-11-22T16:36:24.19 in CET wintertime (UTC +1 hours)
+        "array": ["/Date(1640995200000)/"],  # 2022-01-01T00:00:00+00:00 in CET wintertime (UTC +1 hours)
+        "array_with_nested": [{"date": "/Date(1640995200000)/"}],  # 2022-01-01T00:00:00+00:00 in CET wintertime (UTC +1 hours)
+        "date_summer": "/Date(1655894855020)/",  # 2022-06-22T10:47:35.02 in CET summertime (UTC +2 hours)
+        "date_winter": "/Date(1669134984190)/",  # 2022-11-22T16:36:24.19 in CET wintertime (UTC +1 hours)
     }
     assert MyTestExactSyncStream(config_oauth)._parse_item(obj) == {
         "date": "2021-12-31T23:00:00+00:00",
