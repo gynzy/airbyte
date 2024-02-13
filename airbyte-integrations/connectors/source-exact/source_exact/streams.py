@@ -105,27 +105,7 @@ class ExactStream(HttpStream, IncrementalMixin):
         cursor_value = state.get(self.cursor_field)
 
         if cursor_value:
-            if self.cursor_field == "Timestamp":
-                params["$filter"] = f"Timestamp gt {cursor_value}L"
-            elif self.cursor_field == "Modified":
-                # cursor_value is a timestamp stored as string in real UTC e.g., 2022-12-12T00:00:00.00000+00:00 (see _parse_item)
-                # The Exact API (OData format) doesn't accept timezone info. Instead, we parse the timestamp into
-                # the API's local timezone (CET +1h in winter and +2h in summer) without timezone info.
-                # More details about the API's timezone: see _parse_item.
-
-                if not pendulum.parse(cursor_value).timezone_name in ["UTC", "+00:00"]:
-                    self.logger.warning(
-                        f"The value of the cursor field 'Modified' is not detected as a UTC timestamp: {cursor_value}. This might lead to an incorrect $filter clause and unexpected records. "
-                    )
-
-                tz_cet = pendulum.timezone("CET")
-                utc_timestamp = pendulum.parse(cursor_value)
-                cet_timestamp = tz_cet.convert(utc_timestamp)
-                cet_timestamp_str = cet_timestamp.isoformat().split("+")[0]
-
-                params["$filter"] = f"Modified gt datetime'{cet_timestamp_str}'"
-            else:
-                raise RuntimeError(f"Source not capable of incremental syncing with cursor field '{self.cursor_field}'")
+            params["$filter"] = self._get_param_filter(cursor_value)
 
         if self.cursor_field == "Modified":
             params["$orderby"] = "Modified asc"
@@ -208,6 +188,33 @@ class ExactStream(HttpStream, IncrementalMixin):
             raise RuntimeError(f"Unexpected forbidden error: {error_reason}")
 
         return False
+
+    def _get_param_filter(self, cursor_value: str):
+        """Returns the $filter clause for the cursor field."""
+
+        if self.cursor_field == "Timestamp":
+            return f"Timestamp gt {cursor_value}L"
+
+        elif self.cursor_field != "Modified":
+            raise RuntimeError(f"Source not capable of incremental syncing with cursor field '{self.cursor_field}'")
+
+        # else: cursor_field == "Modified"
+
+        # cursor_value is a timestamp stored as string in real UTC e.g., 2022-12-12T00:00:00.00000+00:00 (see _parse_item)
+        # The Exact API (OData format) doesn't accept timezone info. Instead, we parse the timestamp into
+        # the API's local timezone (CET +1h in winter and +2h in summer) without timezone info.
+        # More details about the API's timezone: see _parse_item.
+        utc_timestamp = pendulum.parse(cursor_value)
+        if utc_timestamp.timezone_name not in ["UTC", "+00:00"]:
+            self.logger.warning(
+                f"The value of the cursor field 'Modified' is not detected as a UTC timestamp: {cursor_value}. This might lead to an incorrect $filter clause and unexpected records."
+            )
+
+        tz_cet = pendulum.timezone("CET")
+        cet_timestamp = tz_cet.convert(utc_timestamp)
+        cet_timestamp_str = cet_timestamp.isoformat().split("+")[0]
+
+        return f"Modified gt datetime'{cet_timestamp_str}'"
 
     def _parse_item(self, obj: dict):
         """

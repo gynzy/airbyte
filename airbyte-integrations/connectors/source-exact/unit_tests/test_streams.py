@@ -286,3 +286,25 @@ def test_send_request__retries_on_expired_token(config_oauth):
 
     assert stream.max_retries > 0
     assert stream._send.call_count == stream.max_retries
+
+
+def test_get_param_filter_raises_invalid_cursor(config_oauth):
+    stream = MyTestExactSyncStream(config_oauth)
+    stream.cursor_field = "banana"
+
+    with pytest.raises(RuntimeError, match="Source not capable of incremental syncing with cursor field 'banana'"):
+        stream._get_param_filter("banana")
+
+
+def test_get_param_filter_timestamp(config_oauth):
+    stream = MyTestExactSyncStream(config_oauth)
+    stream.cursor_field = "Timestamp"
+
+    assert stream._get_param_filter("123") == "Timestamp gt 123L"
+
+
+def test_get_param_filter_modified_with_UTC(config_oauth):
+    stream = MyTestExactSyncStream(config_oauth)
+    stream.cursor_field = "Modified"
+
+    assert stream._get_param_filter("2022-12-12T00:00:00+00:00") == "Modified gt datetime'2022-12-12T01:00:00'"
