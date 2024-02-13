@@ -336,172 +336,258 @@ class ExactOtherStream(ExactStream):
 
 
 class SyncCashflowPaymentTerms(ExactSyncStream):
+    """Stream to sync the endpoint `sync/Cashflow/PaymentTerms`"""
+
     endpoint = "sync/Cashflow/PaymentTerms"
 
 
 class SyncCRMAccounts(ExactSyncStream):
+    """Stream to sync the endpoint `sync/CRM/Accounts`"""
+
     endpoint = "sync/CRM/Accounts"
 
 
 class SyncCRMAddresses(ExactSyncStream):
+    """Stream to sync the endpoint `sync/CRM/Addresses`"""
+
     endpoint = "sync/CRM/Addresses"
 
 
 class SyncCRMContacts(ExactSyncStream):
+    """Stream to sync the endpoint `sync/CRM/Contacts`"""
+
     endpoint = "sync/CRM/Contacts"
 
 
 class SyncCRMQuotationHeaders(ExactSyncStream):
+    """Stream to sync the endpoint `sync/CRM/QuotationHeaders`"""
+
     endpoint = "sync/CRM/QuotationHeaders"
 
 
 class SyncCRMQuotationLines(ExactSyncStream):
+    """Stream to sync the endpoint `sync/CRM/QuotationLines`"""
+
     endpoint = "sync/CRM/QuotationLines"
 
 
 class SyncDeleted(ExactSyncStream):
+    """Stream to sync the endpoint `sync/Deleted`"""
+
     endpoint = "sync/Deleted"
 
 
 class SyncDocumentsDocumentAttachments(ExactSyncStream):
+    """Stream to sync the endpoint `sync/Documents/DocumentAttachments`"""
+
     endpoint = "sync/Documents/DocumentAttachments"
 
 
 class SyncDocumentsDocuments(ExactSyncStream):
+    """Stream to sync the endpoint `sync/Documents/Documents`"""
+
     endpoint = "sync/Documents/Documents"
 
 
 class SyncFinancialGLAccounts(ExactSyncStream):
+    """Stream to sync the endpoint `sync/Financial/GLAccounts`"""
+
     endpoint = "sync/Financial/GLAccounts"
 
 
 class SyncFinancialGLClassifications(ExactSyncStream):
+    """Stream to sync the endpoint `sync/Financial/GLClassifications`"""
+
     endpoint = "sync/Financial/GLClassifications"
 
 
 class SyncFinancialTransactionLines(ExactSyncStream):
+    """Stream to sync the endpoint `sync/Financial/TransactionLines`"""
+
     endpoint = "sync/Financial/TransactionLines"
 
 
 class SyncHRMLeaveAbsenceHoursByDay(ExactSyncStream):
+    """Stream to sync the endpoint `sync/HRM/LeaveAbsenceHoursByDay`"""
+
     endpoint = "sync/HRM/LeaveAbsenceHoursByDay"
 
 
 class SyncHRMScheduleEntries(ExactSyncStream):
+    """Stream to sync the endpoint `sync/HRM/ScheduleEntries`"""
+
     endpoint = "sync/HRM/ScheduleEntries"
 
 
 class SyncHRMSchedules(ExactSyncStream):
+    """Stream to sync the endpoint `sync/HRM/Schedules`"""
+
     endpoint = "sync/HRM/Schedules"
 
 
 class SyncInventoryItemStorageLocations(ExactSyncStream):
+    """Stream to sync the endpoint `sync/Inventory/ItemStorageLocations`"""
+
     endpoint = "sync/Inventory/ItemStorageLocations"
 
 
 class SyncInventoryItemWarehouses(ExactSyncStream):
+    """Stream to sync the endpoint `sync/Inventory/ItemWarehouses`"""
+
     endpoint = "sync/Inventory/ItemWarehouses"
 
 
 class SyncInventorySerialBatchNumbers(ExactSyncStream):
+    """Stream to sync the endpoint `sync/Inventory/SerialBatchNumbers`"""
+
     endpoint = "sync/Inventory/SerialBatchNumbers"
 
 
 class SyncInventoryStockPositions(ExactSyncStream):
+    """Stream to sync the endpoint `sync/Inventory/StockPositions`"""
+
     endpoint = "sync/Inventory/StockPositions"
 
 
 class SyncInventoryStockSerialBatchNumbers(ExactSyncStream):
+    """Stream to sync the endpoint `sync/Inventory/StockSerialBatchNumbers`"""
+
     endpoint = "sync/Inventory/StockSerialBatchNumbers"
 
 
 class SyncInventoryStorageLocationStockPositions(ExactSyncStream):
+    """Stream to sync the endpoint `sync/Inventory/StorageLocationStockPositions`"""
+
     endpoint = "sync/Inventory/StorageLocationStockPositions"
 
 
 class SyncLogisticsItems(ExactSyncStream):
+    """Stream to sync the endpoint `sync/Logistics/Items`"""
+
     endpoint = "sync/Logistics/Items"
 
 
 class SyncLogisticsPurchaseItemPrices(ExactSyncStream):
+    """Stream to sync the endpoint `sync/Logistics/PurchaseItemPrices`"""
+
     endpoint = "sync/Logistics/PurchaseItemPrices"
 
 
 class SyncLogisticsSalesItemPrices(ExactSyncStream):
+    """Stream to sync the endpoint `sync/Logistics/SalesItemPrices`"""
+
     endpoint = "sync/Logistics/SalesItemPrices"
 
 
 class SyncLogisticsSupplierItem(ExactSyncStream):
+    """Stream to sync the endpoint `sync/Logistics/SupplierItem`"""
+
     endpoint = "sync/Logistics/SupplierItem"
 
 
 class SyncManufacturingShopOrderMaterialPlans(ExactSyncStream):
+    """Stream to sync the endpoint `sync/Manufacturing/ShopOrderMaterialPlans`"""
+
     endpoint = "sync/Manufacturing/ShopOrderMaterialPlans"
 
 
 class SyncManufacturingShopOrderRoutingStepPlans(ExactSyncStream):
+    """Stream to sync the endpoint `sync/Manufacturing/ShopOrderRoutingStepPlans`"""
+
     endpoint = "sync/Manufacturing/ShopOrderRoutingStepPlans"
 
 
 class SyncManufacturingShopOrders(ExactSyncStream):
+    """Stream to sync the endpoint `sync/Manufacturing/ShopOrders`"""
+
     endpoint = "sync/Manufacturing/ShopOrders"
 
 
 class SyncProjectProjectPlanning(ExactSyncStream):
+    """Stream to sync the endpoint `sync/Project/ProjectPlanning`"""
+
     endpoint = "sync/Project/ProjectPlanning"
 
 
 class SyncProjectProjects(ExactSyncStream):
+    """Stream to sync the endpoint `sync/Project/Projects`"""
+
     endpoint = "sync/Project/Projects"
 
 
 class SyncProjectProjectWBS(ExactSyncStream):
+    """Stream to sync the endpoint `sync/Project/ProjectWBS`"""
+
     endpoint = "sync/Project/ProjectWBS"
 
 
 class SyncProjectTimeCostTransactions(ExactSyncStream):
+    """Stream to sync the endpoint `sync/Project/TimeCostTransactions`"""
+
     endpoint = "sync/Project/TimeCostTransactions"
 
 
 class SyncPurchaseOrderPurchaseOrders(ExactSyncStream):
+    """Stream to sync the endpoint `sync/PurchaseOrder/PurchaseOrders`"""
+
     endpoint = "sync/PurchaseOrder/PurchaseOrders"
 
 
 class SyncSalesSalesPriceListVolumeDiscounts(ExactSyncStream):
+    """Stream to sync the endpoint `sync/Sales/SalesPriceListVolumeDiscounts`"""
+
     endpoint = "sync/Sales/SalesPriceListVolumeDiscounts"
 
 
 class SyncSalesInvoiceSalesInvoices(ExactSyncStream):
+    """Stream to sync the endpoint `sync/SalesInvoice/SalesInvoices`"""
+
     endpoint = "sync/SalesInvoice/SalesInvoices"
 
 
 class SyncSalesOrderGoodsDeliveries(ExactSyncStream):
+    """Stream to sync the endpoint `sync/SalesOrder/GoodsDeliveries`"""
+
     endpoint = "sync/SalesOrder/GoodsDeliveries"
 
 
 class SyncSalesOrderGoodsDeliveryLines(ExactSyncStream):
+    """Stream to sync the endpoint `sync/SalesOrder/GoodsDeliveryLines`"""
+
     endpoint = "sync/SalesOrder/GoodsDeliveryLines"
 
 
 class SyncSalesOrderSalesOrderHeaders(ExactSyncStream):
+    """Stream to sync the endpoint `sync/SalesOrder/SalesOrderHeaders`"""
+
     endpoint = "sync/SalesOrder/SalesOrderHeaders"
 
 
 class SyncSalesOrderSalesOrderLines(ExactSyncStream):
+    """Stream to sync the endpoint `sync/SalesOrder/SalesOrderLines`"""
+
     endpoint = "sync/SalesOrder/SalesOrderLines"
 
 
 class SyncSubscriptionSubscriptionLines(ExactSyncStream):
+    """Stream to sync the endpoint `sync/Subscription/SubscriptionLines`"""
+
     endpoint = "sync/Subscription/SubscriptionLines"
 
 
 class SyncSubscriptionSubscriptions(ExactSyncStream):
+    """Stream to sync the endpoint `sync/Subscription/Subscriptions`"""
+
     endpoint = "sync/Subscription/Subscriptions"
 
 
 class CRMAccountClassifications(ExactOtherStream):
+    """Stream to sync the endpoint `crm/AccountClassifications`"""
+
     endpoint = "crm/AccountClassifications"
 
 
 class CRMAccountClassificationNames(ExactOtherStream):
+    """Stream to sync the endpoint `crm/AccountClassificationNames`"""
+
     endpoint = "crm/AccountClassificationNames"
