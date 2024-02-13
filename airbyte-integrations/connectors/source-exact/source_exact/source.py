@@ -2,9 +2,12 @@
 # Copyright (c) 2022 Airbyte, Inc., all rights reserved.
 #
 
+import logging
 from typing import Any, List, Mapping, Tuple
 
 from airbyte_cdk.sources import AbstractSource
+
+from airbyte_cdk.models import AirbyteCatalog
 from airbyte_cdk.sources.streams import Stream
 from source_exact.streams import (
     CRMAccountClassificationNames,
@@ -89,7 +92,23 @@ class SourceExact(AbstractSource):
 
         return True, None
 
-    def streams(self, config: Mapping[str, Any]) -> List[Stream]:
+    def discover(self, logger: logging.Logger, config: Mapping[str, Any]) -> AirbyteCatalog:
+        """Implements the Discover operation from the Airbyte Specification.
+        See https://docs.airbyte.com/understanding-airbyte/airbyte-protocol/#discover.
+
+        This method filters out any unauthorized streams from the list of all streams this connector supports.
+        """
+
+        filtered = []
+        for stream in self.streams(config):
+            if stream.test_access():
+                filtered.append(stream.as_airbyte_stream())
+            else:
+                logger.info(f"Filtered out following stream: {stream.name}")
+
+        return AirbyteCatalog(streams=filtered)
+
+    def streams(self, config: Mapping[str, Any]) -> List[ExactStream]:
         return [
             CRMAccountClassifications(config),
             CRMAccountClassificationNames(config),

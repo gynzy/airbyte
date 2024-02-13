@@ -29,6 +29,7 @@ class ExactStream(HttpStream, IncrementalMixin):
     def __init__(self, config: Mapping[str, Any]):
         self._divisions = config["divisions"]
         self._base_url = config["base_url"]
+        self._active_division = self._divisions[0]
 
         self._state_per_division = {}
         for division in self._divisions:
@@ -44,9 +45,9 @@ class ExactStream(HttpStream, IncrementalMixin):
 
     @property
     def url_base(self) -> str:
-        """Overridden as the base url depends on the config (passed at __init__)."""
+        """URL base depends on the current division being synced."""
 
-        return self._url_base
+        return f"{self._base_url}/api/v1/{self._active_division}/"
 
     @property
     def state(self) -> MutableMapping[str, Any]:
@@ -173,6 +174,28 @@ class ExactStream(HttpStream, IncrementalMixin):
                     self._state_per_division[division].update({self.cursor_field: max(cursor_value, current_cursor_value)})
 
             yield record
+
+    def test_access(self) -> bool:
+        """Checks if the user has access to the specific API."""
+
+        try:
+            prepared_request = self._create_prepared_request(
+                path=self.endpoint,
+                headers=self._single_refresh_token_authenticator.get_auth_header(),
+                params={"$top": 0},  # Just want to test if we can access the API, don't care about the results
+            )
+
+            response = self._send_request(prepared_request, {})
+
+            # Forbidden, user does not have access to the API
+            if response.status_code == 401:
+                return False
+
+            response.raise_for_status()
+
+            return True
+        except requests.RequestException:
+            return False
 
     def _is_token_expired(self, response: requests.Response):
         if response.status_code == 401:
